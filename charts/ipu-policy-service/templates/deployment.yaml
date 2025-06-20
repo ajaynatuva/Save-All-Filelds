@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ipu-policy-service.fullname" . }}
+  labels:
+    app: {{ template "ipu-policy-service.name" . }}
+    chart: {{ template "ipu-policy-service.chart" . }}
+    draft: {{ .Values.draft | default "draft-app" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  revisionHistoryLimit: 5
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "ipu-policy-service.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ipu-policy-service.name" . }}
+        draft: {{ .Values.draft | default "draft-app" }}
+        release: {{ .Release.Name }}
+      annotations:
+        buildID: {{ .Values.buildID | default "" | quote }}
+        container.apparmor.security.beta.kubernetes.io/{{ .Chart.Name }}: runtime/default
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.securityContext.runAsGroup }}
+            allowPrivilegeEscalation: {{ .Values.securityContext.allowPrivilegeEscalation }}
+            seccompProfile:
+              type: RuntimeDefault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.containerPort }}
+              protocol: TCP
+          env:
+            - name: DROPBOX_APP_LOCATION
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DROPBOX_APP_LOCATION
+            - name: DROPBOX_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DROPBOX_ACCESS_TOKEN
+            - name: DROPBOX_APP_LINK
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DROPBOX_APP_LINK
+            - name: IPU_EMAIL_SERVICE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_EMAIL_SERVICE_HOST
+            - name: IPU_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_DB_HOST
+            - name: IPU_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_DB_PORT
+            - name: IPU_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_DB_USER
+            - name: IPU_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_DB_PASSWORD
+            - name: IPU_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: IPU_DATABASE
+            - name: ENV_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ENV_NAME
+            - name: DATABASE_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DATABASE_DATABASE
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DATABASE_PORT
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DATABASE_USER
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: DATABASE_PASSWORD
+            - name: ONE_DRIVE_API_IPU_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_API_IPU_CLIENT_ID
+            - name: ONE_DRIVE_API_IPU_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_API_IPU_CLIENT_SECRET
+            - name: ONE_DRIVE_API_IPU_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_API_IPU_USER_NAME
+            - name: ONE_DRIVE_API_IPU_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_API_IPU_PASSWORD
+            - name: ONE_DRIVE_API_IPU_SCOPE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_API_IPU_SCOPE
+            - name: TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: TENANT_ID
+            - name: SHAREPOINT_APP_LOCATION
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: SHAREPOINT_APP_LOCATION
+            - name: SHAREPOINT_APP_LINK
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: SHAREPOINT_APP_LINK
+            - name: ONE_DRIVE_AMPS_IPU_SITE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_AMPS_IPU_SITE_ID
+            - name: ONE_DRIVE_AMPS_IPU_DRIVE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret_name }}
+                  key: ONE_DRIVE_AMPS_IPU_DRIVE_ID

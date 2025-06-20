@@ -1,0 +1,109 @@
+# Default values for ipu-policy-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: advancedpricing.azurecr.io/ipu-policy-service
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: "amps-docker-secret"
+nameOverride: ""
+fullnameOverride: "ipu-policy-service"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 2001
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 5001
+
+deployment:
+  containerPort: 5001
+
+ingress:
+  enabled: true
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+#  path: /ipu-policy-service/?(.*)
+  # hosts:
+  #   - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+#   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app_port: 5001
+
+secret_name: ipu-policy-service-secrets
+
+#ENV vars
+# TODO Move off of dropbox to azure storage account
+dropbox_app_location: /AMPS IPU/Data Curation/
+dropbox_access_token: dropbox_token
+dropbox_app_link: https://www.dropbox.com/home
+ipu_email_service_host: https://ipu-dev.advancedpricing.com/ipu-email-service/
+pgbouncer_host: pgbouncer.tools
+ipu_db_user: kubernetesipu@dragon_dev
+ipu_db_password: p@ssw0rd
+ipu_db_host: pgbouncer.tools
+ipu_db_port: 6432
+pgbouncer_port: 6432
+ipu_database: ipu_dev
+env_name: dev
+database_database: dragon_dev
+database_user: kubernetes@dragon-dev
+database_password: p@assw0rd
+database_host: dragon-dev-db.postgres.database.azure.com
+database_port: 5432
+one_drive_api_ipu_client_id: client_id
+one_drive_api_ipu_client_secret: client_secret
+one_drive_api_ipu_user_name: ipuutility@amps.com
+one_drive_api_ipu_password: p@ssw0rd
+one_drive_api_ipu_scope: https://graph.microsoft.com/.default
+tenant_id: tenant
+sharepoint_app_location: /AMPS_IPU_Local/Data_Curation/
+sharepoint_app_link: https://advancedpricing.sharepoint.com/sites/AMPSIPU/Shared%20Documents
+one_drive_amps_ipu_site_id: advancedpricing.sharepoint.com
+one_drive_amps_ipu_drive_id: one_drive_amps_ipu_drive_id

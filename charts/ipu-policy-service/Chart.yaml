@@ -1,0 +1,4 @@
+apiVersion: v1
+description: ipu-policy-service Helm chart for Kubernetes
+name: ipu-policy-service
+version: ${version}
